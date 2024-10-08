@@ -1,0 +1,76 @@
+# Flutter/Dart specific
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+coverage/
+
+# Generated files
+*.class
+*.lock
+*.log
+*.pyc
+*.swp
+*.tmp
+*.temp
+*.obj
+*.dll
+*.exe
+*.ipa
+*.apk
+
+# Gradle
+.gradle/
+build/
+
+# Android Studio
+.idea/
+*.iml
+
+# VSCode
+.vscode/
+
+# iOS
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/App.framework
+ios/Flutter/GeneratedPluginRegistrant.*
+ios/Flutter/ephemeral/
+
+# Pods
+ios/Pods/
+ios/Podfile.lock
+
+# Xcode
+xcuserdata/
+DerivedData/
+*.xcworkspace
+*.xcuserstate
+
+# Web
+web/.dart_tool/
+web/flutter_export_environment.sh
+
+# Windows
+windows/flutter/ephemeral/
+
+# MacOS
+macos/Flutter/ephemeral/
+
+# Linux
+linux/flutter/ephemeral/
+
+# Firebase (se utilizzato)
+firebase_app_id_file.json
+
+# User-specific files
+*.user
+*.userprefs
+
+# Flutter generated files
+flutter_export_environment.sh
