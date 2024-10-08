@@ -1,12 +1,12 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:pedometer/pedometer.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(const StepCounterApp());
 
 class StepCounterApp extends StatelessWidget {
-  const StepCounterApp({super.key});
+  const StepCounterApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class StepCounterApp extends StatelessWidget {
 }
 
 class StepCounterHomePage extends StatefulWidget {
-  const StepCounterHomePage({super.key});
+  const StepCounterHomePage({Key? key}) : super(key: key);
 
   @override
   _StepCounterHomePageState createState() => _StepCounterHomePageState();
@@ -49,10 +49,51 @@ class _StepCounterHomePageState extends State<StepCounterHomePage> {
     super.dispose();
   }
 
-  void _startStepCount() {
-    _stepCountSubscription = Pedometer.stepCountStream.listen(
-      _onStepCount,
-      onError: _onStepCountError,
+  void _startStepCount() async {
+    if (await _checkAndRequestPermissions()) {
+      _stepCountSubscription = Pedometer.stepCountStream.listen(
+        _onStepCount,
+        onError: _onStepCountError,
+      );
+    } else {
+      // Gestisci il caso in cui i permessi non sono stati concessi
+      _showPermissionDeniedDialog();
+    }
+  }
+
+  Future<bool> _checkAndRequestPermissions() async {
+    // Controlla e richiedi il permesso ACTIVITY_RECOGNITION
+    PermissionStatus status = await Permission.activityRecognition.status;
+
+    if (status.isDenied) {
+      // Richiedi il permesso
+      status = await Permission.activityRecognition.request();
+    }
+
+    if (status.isPermanentlyDenied) {
+      // Apri le impostazioni dell'app se il permesso è permanentemente negato
+      await openAppSettings();
+      return false;
+    }
+
+    return status.isGranted;
+  }
+
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Permesso Negato'),
+        content: Text('Per utilizzare questa funzione, devi concedere il permesso richiesto.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 
