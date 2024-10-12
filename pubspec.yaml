@@ -1,5 +1,5 @@
-name: virtuosity2
-description: "Step counter"
+name: virtuosity
+description: "A step counter app"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -30,13 +30,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  pedometer: ^4.0.2
-  permission_handler: ^11.3.1
-
+  health: ^11.1.0
+  permission_handler: ^10.2.0
+  carp_serializable: ^2.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:

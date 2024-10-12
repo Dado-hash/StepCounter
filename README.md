@@ -1,6 +1,6 @@
-# virtuosity2
+# virtuosity
 
-Step counter
+A step counter app
 
 ## Getting Started
 

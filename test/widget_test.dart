@@ -8,5 +8,4 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:virtuosity2/main.dart';
-
+import 'package:virtuosity/main.dart';
