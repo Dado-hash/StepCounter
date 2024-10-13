@@ -79,10 +79,6 @@ class _HealthAppState extends State<HealthApp> {
     }
   }
 
-  /// Install Google Health Connect on this phone.
-  Future<void> installHealthConnect() async =>
-      await Health().installHealthConnect();
-
   /// Gets the Health Connect status on Android.
   Future<void> getHealthConnectSdkStatus() async {
     assert(Platform.isAndroid, "This is only available on Android");
