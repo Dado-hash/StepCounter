@@ -7,9 +7,11 @@ import 'utils.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:carp_serializable/carp_serializable.dart';
 
-void main() => runApp(HealthApp());
+void main() => runApp(const HealthApp());
 
 class HealthApp extends StatefulWidget {
+  const HealthApp({super.key});
+
   @override
   _HealthAppState createState() => _HealthAppState();
 }
@@ -56,14 +58,14 @@ class _HealthAppState extends State<HealthApp> {
   }
 
   Future<void> _requestPermissionsOnStartup() async {
-    // Richiedi i permessi necessari quando l'app viene aperta per la prima volta
+    // Requests permissions when the app is opened for the first time
     await Permission.activityRecognition.request();
     await Permission.location.request();
 
-    // Controllo permessi già esistenti
+    // Check permissions
     bool? hasPermissions = await Health().hasPermissions(types, permissions: permissions);
 
-    // Se i permessi non sono stati già concessi, richiedili
+    // Requests permissions if they're not already given
     if (!hasPermissions!) {
       try {
         bool authorized = await Health().requestAuthorization(types, permissions: permissions);
@@ -140,31 +142,39 @@ class _HealthAppState extends State<HealthApp> {
   Future<void> fetchStepData() async {
     int? steps;
 
-    // get steps for today (i.e., since midnight)
+    // get data for today (i.e., since midnight)
     final now = DateTime.now();
     final midnight = DateTime(now.year, now.month, now.day);
 
-    bool stepsPermission =
-        await Health().hasPermissions([HealthDataType.STEPS]) ?? false;
+    // Check permission for steps
+    bool stepsPermission = await Health().hasPermissions([
+      HealthDataType.STEPS,
+    ]) ?? false;
+
     if (!stepsPermission) {
-      stepsPermission =
-      await Health().requestAuthorization([HealthDataType.STEPS]);
+      stepsPermission = await Health().requestAuthorization([
+        HealthDataType.STEPS,
+      ]);
     }
 
     if (stepsPermission) {
       try {
+        // Get the total number of steps
         steps = await Health().getTotalStepsInInterval(midnight, now,
             includeManualEntry:
             !recordingMethodsToFilter.contains(RecordingMethod.manual));
+
       } catch (error) {
-        debugPrint("Exception in getTotalStepsInInterval: $error");
+        debugPrint("Exception in fetchStepData: $error");
       }
 
       debugPrint('Total number of steps: $steps');
 
       setState(() {
         _nofSteps = (steps == null) ? 0 : steps;
-        _state = (steps == null) ? AppState.NO_DATA : AppState.STEPS_READY;
+        _state = (steps == null)
+            ? AppState.NO_DATA
+            : AppState.STEPS_READY;
       });
     } else {
       debugPrint("Authorization not granted - error in authorization");
@@ -199,7 +209,7 @@ class _HealthAppState extends State<HealthApp> {
                         style: const ButtonStyle(
                             backgroundColor:
                             WidgetStatePropertyAll(Colors.blue)),
-                        child: const Text("Fetch Step Data",
+                        child: const Text("Fetch Steps Data",
                             style: TextStyle(color: Colors.white))),
                   ]),
               ],
@@ -307,7 +317,7 @@ class _HealthAppState extends State<HealthApp> {
   Widget get _contentDataReady => ListView.builder(
       itemCount: _healthDataList.length,
       itemBuilder: (_, index) {
-        // filter out manual entires if not wanted
+        // filter out manual entries if not wanted
         if (recordingMethodsToFilter
             .contains(_healthDataList[index].recordingMethod)) {
           return Container();
@@ -346,32 +356,36 @@ class _HealthAppState extends State<HealthApp> {
         );
       });
 
-  Widget _contentNoData = const Text('No Data to show');
+  final Widget _contentNoData = const Text('No Data to show');
 
-  Widget _contentNotFetched =
+  final Widget _contentNotFetched =
   const Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-    const Text("Press 'Auth' to get permissions to access health data."),
-    const Text("Press 'Fetch Dat' to get health data."),
-    const Text("Press 'Add Data' to add some random health data."),
-    const Text("Press 'Delete Data' to remove some random health data."),
+    Text("Press 'Auth' to get permissions to access health data."),
+    Text("Press 'Fetch Dat' to get health data."),
+    Text("Press 'Add Data' to add some random health data."),
+    Text("Press 'Delete Data' to remove some random health data."),
   ]);
 
-  Widget _authorized = const Text('Authorization granted!');
+  final Widget _authorized = const Text('Authorization granted!');
 
-  Widget _authorizationNotGranted = const Column(
+  final Widget _authorizationNotGranted = const Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      const Text('Authorization not given.'),
-      const Text(
+      Text('Authorization not given.'),
+      Text(
           'For Google Health Connect please check if you have added the right permissions and services to the manifest file.'),
-      const Text('For Apple Health check your permissions in Apple Health.'),
+      Text('For Apple Health check your permissions in Apple Health.'),
     ],
   );
 
   Widget _contentHealthConnectStatus = const Text(
       'No status, click getHealthConnectSdkStatus to get the status.');
 
-  Widget get _stepsFetched => Text('Total number of steps: $_nofSteps.');
+  Widget get _stepsFetched => Column(
+    children: [
+      Text('Total number of steps: $_nofSteps.'),
+    ],
+  );
 
   Widget get _content => switch (_state) {
     AppState.DATA_READY => _contentDataReady,
